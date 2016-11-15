@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL="postgres://postgres:password@db:5432/postgres"
+      - DATA_SOURCE="https://..."
+      - DATA_SOURCE_SECRET="localhost"
+    depends_on:
+      - db
+  db:
+    image: calthorpeanalytics/postgis:9.5
+    environment:
+      - POSTGRES_PASSWORD=password

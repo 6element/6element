@@ -53,6 +53,13 @@ psql -p5432 -U postgres -d element < Desktop/latest.sql
 
 ### Running the app
 
+#### docker-compose
+
+```bash
+docker-compose up
+docker-compose exec web 'node tools/init-database.js'
+```
+
 #### Daily routine in dev
 
 ```
