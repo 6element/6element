@@ -2,10 +2,10 @@
 
 require('es6-shim');
 
+var DATA_SOURCE_SECRET = process.env.DATA_SOURCE_SECRET;
+
 var fs = require('fs');
 var path = require('path');
-
-var PRIVATE = require('../PRIVATE.json');
 
 // Express
 var express = require('express');
@@ -31,9 +31,9 @@ var pheromonUrl = process.env.PHEROMON_URL ? process.env.PHEROMON_URL : 'https:/
 var getMeasures     = require('./getMeasures');
 
 // References Files
-var categoryFile = require('../references/categories.json'); 
-var dictionaryFile = require('../references/dictionary.json'); 
-var synonymFile = require('../references/synonyms.json'); 
+var categoryFile = require('../references/categories.json');
+var dictionaryFile = require('../references/dictionary.json');
+var synonymFile = require('../references/synonyms.json');
 
 // ------- INIT SERVER ---------
 var PORT = process.env.VIRTUAL_PORT ? process.env.VIRTUAL_PORT: 8000;
@@ -55,18 +55,18 @@ app.use(compression());
 var ioPheromon = require('socket.io-client')('https://pheromon.ants.builders');
 ioPheromon.connect();
 ioPheromon.on('bin', function(data){
-    
+
     places.updateBin(data.installed_at, data.bin)
     .then(function(){
         //console.log('emit socket');
-        //io6element.emit('bin', data); 
+        //io6element.emit('bin', data);
     })
-    .catch(function(err){ console.error('/', err, err.stack); }); 
+    .catch(function(err){ console.error('/', err, err.stack); });
 });
 
 
 // ---------- SERVER RENDERING ----------
-// Doesn't make sense to start the server if these files don't exist. 
+// Doesn't make sense to start the server if these files don't exist.
 var decheteriesHtml = fs.readFileSync(path.join(__dirname, '..', 'client', 'decheteries.html'), {encoding: 'utf8'});
 var indexHtml       = fs.readFileSync(path.join(__dirname, '..', 'client', 'index.html'), {encoding: 'utf8'});
 
@@ -84,7 +84,7 @@ app.get('/operator/:name', function(req,res){
 
 // Main routing path
 app.get('/decheteries.html', function(req,res){
-    
+
     var selection = {
         date: new Date(),
         mode: 'citizen',
@@ -93,70 +93,70 @@ app.get('/decheteries.html', function(req,res){
 
     // Default date = today
     if(req.query.date !== undefined){
-        
+
         var strDate = req.query.date.split('-');
         selection.date = new Date(strDate[2],strDate[1]-1, strDate[0]);
     }
-    
+
     var getPlaces = undefined;// Find the good method
 
     // 'A proximité' or search activated
     if(req.query.position !== undefined){
-        
+
         var position = JSON.parse(req.query.position);
         getPlaces = places.getKNearest({ lat: position[0], lon: position[1] }, 20);
     }
     // 'Mes déchèteries' activated
     else if(req.query.places !== undefined){
-        
+
         var ids = JSON.parse(req.query.places);
         getPlaces = places.getByIds(ids);
     }
     // Operateur path
     else if(req.query.operateur !== undefined){
-        
+
         selection.mode = 'operator';
         var operator = req.query.operateur;
         getPlaces = places.getByOperator(operator);
     }
 
-    if(getPlaces === undefined) 
+    if(getPlaces === undefined)
         return redirectError(res, 'Erreur de traitement, veuillez renouveler votre recherche');
-  
+
     // DB places
     getPlaces
     .then(function(placesFromDB){
 
         selection.places = placesFromDB;
-        
+
         // + measures
         getMeasures(pheromonUrl, selection)
         .then(function(placesWithMeasures){
 
             selection.places = placesWithMeasures;
-            
+
             // 1. parse the html template
             parseHtml(decheteriesHtml).
             then(function(result){
                 // 2. insert the react component rendered
                 result.document.getElementById('sheet').innerHTML = reactServer.renderToString( react.createElement(placesView, selection) );
-                // 3. send Html 
+                // 3. send Html
                 res.send( jsdom.serializeDocument(result.document) );
                 // 4. Free memory
                 result.dispose();
             })
-            .catch(function(err){ 
-                console.error('/', err, err.stack); 
+            .catch(function(err){
+                console.error('/', err, err.stack);
                 redirectError(res, 'Erreur de traitement, veuillez renouveler votre recherche');
-            }); 
+            });
         })
         .catch(function(err){
-            console.error('/', err, err.stack); 
+            console.error('/', err, err.stack);
             redirectError(res, 'Erreur de traitement, veuillez renouveler votre recherche');
         });
     })
     .catch(function(err){
-        console.error('/', err, err.stack); 
+        console.error('/', err, err.stack);
         redirectError(res, 'Erreur de traitement, veuillez renouveler votre recherche');
     });
 });
@@ -184,7 +184,7 @@ app.get('/place/:placeId', function(req,res){
 });
 
 app.get('/bins/get/:pheromonId', function(req, res){
-    if(req.query.s === PRIVATE.secret) {
+    if(req.query.s === DATA_SOURCE_SECRET) {
         var pheromonId = req.params.pheromonId;
         console.log('requesting GET bins for pheromonId', pheromonId);
 
@@ -200,11 +200,11 @@ app.get('/bins/get/:pheromonId', function(req, res){
 });
 
 app.post('/bins/update', function(req, res){
-    if(req.query.s === PRIVATE.secret) {
+    if(req.query.s === DATA_SOURCE_SECRET) {
         var pheromonId = req.body.pheromonId;
 
         console.log('requesting UPDATE bins for pheromonId', pheromonId);
-        
+
         places.updateBins(pheromonId, req.body.bins)
         .then(function(data){
             res.status(200).send(data);
@@ -217,11 +217,11 @@ app.post('/bins/update', function(req, res){
 });
 
 app.post('/bins/updateById', function(req, res){
-    //if(req.query.s === PRIVATE.secret) {
+    //if(req.query.s === DATA_SOURCE_SECRET) {
         var id = req.body.id;
         var certified = req.body.certified;
         console.log('requesting UPDATE bins for id', id);
-        
+
         var promise = certified ?
         osmPlaces.updateBinsById(id, req.body.bins) :
         places.updateBinsById(id, req.body.bins);
@@ -257,15 +257,15 @@ function redirectError(res, error){
     then(function(result){
         // 2. insert the react component rendered
         result.document.getElementById('errorposition').innerHTML = error;
-        // 3. send Html 
+        // 3. send Html
         res.send( jsdom.serializeDocument(result.document) );
         // 4. Free memory
         result.dispose();
     })
-    .catch(function(err){ 
-        console.error('/', err, err.stack); 
+    .catch(function(err){
+        console.error('/', err, err.stack);
         res.status(500).send(err);
-    }); 
+    });
 }
 
 // catchall
@@ -282,5 +282,3 @@ server.listen(PORT, function () {
         PORT
     ].join(''));
 });
-
-
