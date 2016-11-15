@@ -125,14 +125,10 @@ def order_data(res):
     data.sort(key = lambda arr: arr["date"])
     return json.dumps(data)
 
-# Loading configuration, needed for data_source and secret
-secret_json = os.path.dirname(os.path.abspath(__file__)) + "/../PRIVATE.json"
-with open(secret_json) as configuration_json:
-    configuration = json.load(configuration_json)
-
+# Configuration is loaded from environment variables
 print
 print "Fetching infos of all places..."
-places_url = configuration["data_source"] + "/allPlacesInfos"
+places_url = "%(DATA_SOURCE)/allPlacesInfos" % os.environ
 places = urllib2.urlopen(places_url).read()
 print "  Saving..."
 save_to_file("sensors/all_places_infos.json", places)
@@ -140,7 +136,7 @@ save_to_file("sensors/all_places_infos.json", places)
 
 print
 print "Retrieving datas of openinging hours of all places"
-opening_hours_url = configuration["data_source"] + "/sensor/getAll?s=" + configuration["secret"]
+opening_hours_url = "%(DATA_SOURCE)/sensor/getAll?s=%(DATA_SOURCE_SECRET)" % os.environ
 print "  Saving..."
 save_to_file("sensors/opening_hours.json", urllib2.urlopen(opening_hours_url).read())
 
@@ -149,14 +145,14 @@ json_places = json.loads(places)
 
 print
 print "Fetching measures for each places..."
-requests = map(lambda place: grequests.get(configuration["data_source"] + "/measurements/places?ids=" + str(place["id"]) + "&types=wifi"), json_places)
+requests = map(lambda place: grequests.get("%(DATA_SOURCE)/measurements/places?ids=%(PLACE_ID)&types=wifi" % dict({ "PLACE_ID": str(place["id"]) }, **os.environ), json_places)
 results = grequests.map(requests)
 print "  Saving..."
 map(lambda (index, result): save_to_file("sensors/sensor-" + str(json_places[index]["id"]) + "_wifi.json", order_data(result.content)), enumerate(results))
 
 print
 print "Fetching infos of each places..."
-places_infos_requests = map(lambda place: grequests.get("http://6element.fr/place/" + str(place["id"])), json_places)
+places_infos_requests = map(lambda place: grequests.get("https://6element.fr/place/%(PLACE_ID)" % { "PLACE_ID": str(place["id"]) }), json_places)
 places_infos = grequests.map(places_infos_requests)
 print "  Saving..."
 map(lambda (index, result): save_to_file("sensors/opening_hours-" + str(json_places[index]["id"]) + ".json", result.content), enumerate(places_infos))

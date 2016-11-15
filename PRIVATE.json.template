@@ -1,7 +1,0 @@
-{
-    "secret": "fake",
-    "data_source": "http://foo",
-    "pg_user": "postgres",
-    "pg_pwd": "toto",
-    "db_name": "element"
-}

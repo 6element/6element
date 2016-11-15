@@ -10,12 +10,21 @@
 Install:
 * Node.js 4.0
 * Postgresql 9.4
+* Python 2.7
 * [Postgis](http://postgis.net/install/)
 
 then use `npm install` to install all the dependencies.
-Create a `PRIVATE.json` following the [example](PRIVATE.example.json)
 
-tette	
+### Environment variables
+
+| name                | required | type   | defaults    | description
+| ---                 | ---      | ---    | ---         | ---         
+| `DATA_SOURCE`       | ☑️       | string |             | ??? (`https://.../`)
+| `DATA_SOURCE_SECRET`| ☑️       | string |             | ???
+| `DATABASE_URL`      | ☑️       | integer|             | `postgres://...`
+| `PORT`              |          | integer| 3000        | HTTP port of the Node app
+| `NODE_ENV`          |          | string | development | Node app mode
+
 
 ### Initialize the database
 
@@ -47,7 +56,7 @@ psql -p5432 -U postgres -d element < Desktop/latest.sql
 #### Daily routine in dev
 
 ```
-npm run dev 
+npm run dev
 ```
 
 
@@ -56,5 +65,3 @@ npm run dev
 ````
 npm run prod
 ````
-
-
