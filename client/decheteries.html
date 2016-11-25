@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="./css/lib/leaflet.css">
 		<script defer src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script defer type="text/javascript"
-		  src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCLuhubHWNbDgBhmj61OUo07L-zjHsVkKw">
+		  src="https://maps.googleapis.com/maps/api/js?libraries=places&key={{GOOGLE_MAPS_API_KEY}}">
 		</script>
         <script defer src="./js/lib/leaflet.js"></script>
         <script defer src="./js/createMap.js"></script>
@@ -24,7 +24,7 @@
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 			ga('create', 'UA-71148240-1', 'auto');
 			ga('send', 'pageview', location.pathname);
-		</script>		
+		</script>
 		<script type="text/javascript">
 			window.doorbellOptions = {
 			    appKey: 'hUVh0A2FBaKxLsZm6uVhYHXCBnpx2gZzKtDapgajKm4rB8QTiYpvZLond1E2WIuY'
@@ -40,7 +40,7 @@
 		<header>
 			<div class="adapt-width">
 				<a id="back" href="/"><img src='./img/back.svg'/></a>
-				<form id="searchbar"> 
+				<form id="searchbar">
 					<input type="text" id="where-input" placeholder="adresse, ville, code postal"/>
 				</form>
 			</div>

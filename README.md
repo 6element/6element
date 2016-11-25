@@ -26,6 +26,7 @@ npm install
 | ---                 | ---      | ---    | ---         | ---         
 | `PHEROMON_URL`      | ☑️       | string | https://pheromon.ants.builders            | Pheromon API URL
 | `PHEROMON_API_TOKEN`| ☑️       | string |             | Secret used to query Pheromon API
+| `GOOGLE_MAPS_API_KEY`| ☑️      | string |             | [Google Maps API Key](https://console.developers.google.com/projectselector/apis/api/places_backend/overview)
 | `DATABASE_URL`      | ☑️       | integer|             | `postgres://...`
 | `PORT`              |          | integer| 3000        | HTTP port of the Node app
 | `NODE_ENV`          |          | string | development | Node app mode

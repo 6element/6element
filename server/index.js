@@ -67,8 +67,11 @@ ioPheromon.on('bin', function(data){
 
 // ---------- SERVER RENDERING ----------
 // Doesn't make sense to start the server if these files don't exist.
-var decheteriesHtml = fs.readFileSync(path.join(__dirname, '..', 'client', 'decheteries.html'), {encoding: 'utf8'});
-var indexHtml       = fs.readFileSync(path.join(__dirname, '..', 'client', 'index.html'), {encoding: 'utf8'});
+var clientDir = path.join(__dirname, '..', 'client');
+var decheteriesHtml = fs.readFileSync(path.join(clientDir, 'decheteries.html'), {encoding: 'utf8'}).replace(/{{GOOGLE_MAPS_API_KEY}}/g, process.env.GOOGLE_MAPS_API_KEY);
+var menuAlterHtml = fs.readFileSync(path.join(clientDir, 'menuAlter.html'), {encoding: 'utf8'}).replace(/{{GOOGLE_MAPS_API_KEY}}/g, process.env.GOOGLE_MAPS_API_KEY);
+var alternativesHtml = fs.readFileSync(path.join(clientDir, 'alternatives.html'), {encoding: 'utf8'}).replace(/{{GOOGLE_MAPS_API_KEY}}/g, process.env.GOOGLE_MAPS_API_KEY);
+var indexHtml       = fs.readFileSync(path.join(clientDir, 'index.html'), {encoding: 'utf8'}).replace(/{{GOOGLE_MAPS_API_KEY}}/g, process.env.GOOGLE_MAPS_API_KEY);
 
 // Redirecting previous url
 app.get('/operator/:name', function(req,res){
@@ -161,6 +164,21 @@ app.get('/decheteries.html', function(req,res){
     });
 });
 
+app.get('/alternatives.html', function(req, res) {
+  res.send(alternativesHtml);
+});
+
+app.get('/index.html', function(req, res) {
+  res.send(indexHtml);
+});
+
+app.get('/menuAlter.html', function(req, res) {
+  res.send(menuAlterHtml);
+});
+
+app.get('/', function(req, res) {
+  res.send(indexHtml);
+});
 
 
 // ---------- API ----------
@@ -245,9 +263,8 @@ app.get('/references', function(req, res){
     res.send({categories: categoryFile, dictionary: dictionaryFile, synonyms: synonymFile});
 });
 
-
-
 app.use(express.static(path.join(__dirname, '..', 'client'), {etag: false, maxAge: 60*60*1000}));
+
 
 // ---------- CATCH ERRORS ----------
 
