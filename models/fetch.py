@@ -128,7 +128,7 @@ def order_data(res):
 # Configuration is loaded from environment variables
 print
 print "Fetching infos of all places..."
-places_url = "%(DATA_SOURCE)/allPlacesInfos" % os.environ
+places_url = "%(PHEROMON_URL)/allPlacesInfos" % os.environ
 places = urllib2.urlopen(places_url).read()
 print "  Saving..."
 save_to_file("sensors/all_places_infos.json", places)
@@ -136,7 +136,7 @@ save_to_file("sensors/all_places_infos.json", places)
 
 print
 print "Retrieving datas of openinging hours of all places"
-opening_hours_url = "%(DATA_SOURCE)/sensor/getAll?s=%(DATA_SOURCE_SECRET)" % os.environ
+opening_hours_url = "%(PHEROMON_URL)/sensor/getAll?s=%(PHEROMON_API_TOKEN)" % os.environ
 print "  Saving..."
 save_to_file("sensors/opening_hours.json", urllib2.urlopen(opening_hours_url).read())
 
@@ -145,7 +145,7 @@ json_places = json.loads(places)
 
 print
 print "Fetching measures for each places..."
-requests = map(lambda place: grequests.get("%(DATA_SOURCE)/measurements/places?ids=%(PLACE_ID)&types=wifi" % dict({ "PLACE_ID": str(place["id"]) }, **os.environ), json_places)
+requests = map(lambda place: grequests.get("%(PHEROMON_URL)/measurements/places?ids=%(PLACE_ID)&types=wifi" % dict({ "PLACE_ID": str(place["id"]) }, **os.environ), json_places)
 results = grequests.map(requests)
 print "  Saving..."
 map(lambda (index, result): save_to_file("sensors/sensor-" + str(json_places[index]["id"]) + "_wifi.json", order_data(result.content)), enumerate(results))
