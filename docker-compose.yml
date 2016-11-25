@@ -3,15 +3,26 @@ version: '2'
 services:
   web:
     build: .
+    image: 6element/6element.fr
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL="postgres://postgres:password@db:5432/postgres"
-      - DATA_SOURCE="https://..."
-      - DATA_SOURCE_SECRET="localhost"
+      - DATABASE_URL=postgres://postgres:password@db:5432/postgres
+      - PHEROMON_API_TOKEN=
     depends_on:
       - db
+
+  models:
+    build: ./models
+    image: 6element/models
+    command: "true"
+    environment:
+      - PHEROMON_URL=https://pheromon.ants.builders
+      - PHEROMON_API_TOKEN=
+
   db:
     image: calthorpeanalytics/postgis:9.5
     environment:
       - POSTGRES_PASSWORD=password
+    logging:
+      driver: none
