@@ -28,26 +28,21 @@ then use `npm install` to install all the dependencies.
 
 ### Initialize the database
 
-In the psql console (just type `psql` to access it), you can init your db with:
+To initialise the database structure, run:
 
-```
-alter user postgres password 'toto';
-CREATE DATABASE element OWNER postgres;
-```
-
-In your regular console:
-
-```
-node tools/init-database.js
+```bash
+DATABASE_URL=postgres://... npm run db:install
 ```
 
-```
-node tools/update-tables.js // if you want to add or modify your tables, it doesnt drop the tables, so you're fine
+When the database schema is modified, one needs to update its associated JavaScript definition:
+
+```bash
+DATABASE_URL=postgres://... npm run db:update-definitions
 ```
 
-you can always use `psql` separately to load and dump data:
+You can always use `psql` separately to load and dump data:
 
-```
+```bash
 psql -p5432 -U postgres -d element < Desktop/latest.sql
 ```
 
@@ -56,8 +51,8 @@ psql -p5432 -U postgres -d element < Desktop/latest.sql
 #### docker-compose
 
 ```bash
-docker-compose up
-docker-compose exec web 'node tools/init-database.js'
+docker-compose run web npm run db:install
+docker-compose up --build web
 ```
 
 #### Daily routine in dev

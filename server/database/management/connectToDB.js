@@ -1,7 +1,7 @@
 'use strict';
 
 var pg = require('pg');
-var conString = process.env.DATABASE_URL || 'postgres:localhost:5432/6element';
+var conString = process.env.DATABASE_URL;
 
 var MAX_ATTEMPTS = 10;
 var INITIAL_TIMEOUT_TIME = 100;

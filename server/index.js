@@ -2,7 +2,7 @@
 
 require('es6-shim');
 
-var DATA_SOURCE_SECRET = process.env.DATA_SOURCE_SECRET;
+var PHEROMON_API_TOKEN = process.env.PHEROMON_API_TOKEN;
 
 var fs = require('fs');
 var path = require('path');
@@ -27,7 +27,7 @@ var places = require('./database/models/places.js');
 var osmPlaces = require('./database/models/osmPlaces.js');
 
 // Pheromon API calls
-var pheromonUrl = process.env.PHEROMON_URL ? process.env.PHEROMON_URL : 'https://pheromon.ants.builders';
+var pheromonUrl = process.env.PHEROMON_URL || 'https://pheromon.ants.builders';
 var getMeasures     = require('./getMeasures');
 
 // References Files
@@ -36,7 +36,7 @@ var dictionaryFile = require('../references/dictionary.json');
 var synonymFile = require('../references/synonyms.json');
 
 // ------- INIT SERVER ---------
-var PORT = process.env.VIRTUAL_PORT ? process.env.VIRTUAL_PORT: 8000;
+var PORT = process.env.PORT || 8000;
 var app = express();
 var server  = require('http').createServer(app);
 
@@ -52,7 +52,7 @@ app.use(compression());
 
 // On 'bin' socket received from Pheromon, we will update the concerned bin status
 // + transfer the socket to the client in case of the recycling center being displayed
-var ioPheromon = require('socket.io-client')('https://pheromon.ants.builders');
+var ioPheromon = require('socket.io-client')(pheromonUrl);
 ioPheromon.connect();
 ioPheromon.on('bin', function(data){
 
@@ -184,7 +184,7 @@ app.get('/place/:placeId', function(req,res){
 });
 
 app.get('/bins/get/:pheromonId', function(req, res){
-    if(req.query.s === DATA_SOURCE_SECRET) {
+    if(req.query.s === PHEROMON_API_TOKEN) {
         var pheromonId = req.params.pheromonId;
         console.log('requesting GET bins for pheromonId', pheromonId);
 
@@ -200,7 +200,7 @@ app.get('/bins/get/:pheromonId', function(req, res){
 });
 
 app.post('/bins/update', function(req, res){
-    if(req.query.s === DATA_SOURCE_SECRET) {
+    if(req.query.s === PHEROMON_API_TOKEN) {
         var pheromonId = req.body.pheromonId;
 
         console.log('requesting UPDATE bins for pheromonId', pheromonId);
@@ -217,7 +217,7 @@ app.post('/bins/update', function(req, res){
 });
 
 app.post('/bins/updateById', function(req, res){
-    //if(req.query.s === DATA_SOURCE_SECRET) {
+    //if(req.query.s === PHEROMON_API_TOKEN) {
         var id = req.body.id;
         var certified = req.body.certified;
         console.log('requesting UPDATE bins for id', id);
@@ -277,8 +277,5 @@ app.use(function(req, res){
 // -------- SERVER LISTENING --------
 
 server.listen(PORT, function () {
-    console.log('Server running on', [
-        'http://localhost:',
-        PORT
-    ].join(''));
+    console.log('Server running on http://localhost:%s', PORT);
 });

@@ -7,7 +7,7 @@ var path = require('path');
 
 var generateSqlDefinition = require('sql-generate');
 
-var conString = process.env.DATABASE_URL || 'postgres:localhost:5432/6element';
+var conString = process.env.DATABASE_URL;
 
 
 module.exports = function(){
