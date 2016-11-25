@@ -1,1 +1,1 @@
-node ./pre-commit-lint.js
+npm test
