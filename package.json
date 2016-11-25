@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Reducing waste with sensors and an app",
   "main": "index.js",
+  "engines": {
+    "node": "4.x.x"
+  },
   "scripts": {
     "db:install": "node tools/init-database.js",
     "db:update-definitions": "node tools/update-tables.js",
