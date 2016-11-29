@@ -18,9 +18,4 @@ PRIVATE.json
 *.bak
 
 # files generated for server-side purposes
-
 client/views/*.js
-
-requetesDB.md
-
-declarations.js

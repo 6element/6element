@@ -1,0 +1,8 @@
+multiprocessing===2.6.2.1
+matplotlib===1.5.3
+pandas===0.19.1
+git+https://github.com/anthill/Python_OpeningHours#2180e1cd9209df92d3c12b69bf03a67bc29167e4=opening_hours
+pytz===2016.7
+scikit-learn===0.18.1
+grequests===0.3.0
+beautifulsoup4===4.5.1

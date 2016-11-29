@@ -7,8 +7,7 @@ var path = require('path');
 
 var generateSqlDefinition = require('sql-generate');
 
-var PRIVATE = require('../../../PRIVATE.json');
-var conString = 'postgres://'+ PRIVATE.pg_user + ':' + PRIVATE.pg_pwd + '@localhost:5432/' + PRIVATE.db_name;
+var conString = process.env.DATABASE_URL;
 
 
 module.exports = function(){
@@ -28,4 +27,4 @@ module.exports = function(){
 			reject('Coudn\'t generate definitions, caught exception: ', err);
 		});
 	});
-};	
+};
